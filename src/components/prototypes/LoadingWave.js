@@ -20,7 +20,7 @@ export default function LoadingWave() {
   });
 
   return (
-    <div className="relative w-64 h-64 rounded-full   ">
+    <div className="relative rounded-full mx-auto items-center flex h-full">
       {spikes.map(({ angle, delay, duration }, idx) => (
         <div
           key={idx}

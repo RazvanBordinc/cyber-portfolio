@@ -17,7 +17,7 @@ const folders = [
     title: "how_to_use",
     access: "AUTHORIZED",
     content:
-      "Kernel v2.4.5 loaded.\nMemory check: PASSED\nNetwork interfaces: ONLINE\nSecurity protocols: ACTIVE\n\nWelcome to the mainframe.",
+      " - click on a folder to see its content\n\n - if the folder is locked, decrypt its password from passwords folder in the decrypt terminal\n\n - if you want to go back, click on the back button\n\n - to see the projects on github go to projects_links",
   },
   {
     title: "projects",
@@ -63,23 +63,23 @@ const folders = [
   },
 
   {
-    title: "github_links",
+    title: "project_links",
     access: "AUTHORIZED",
     content:
-      "System configuration:\n\nOS: CyberOS v3.5.2\nCPU: Quantum Core i9\nMemory: 64TB Neural RAM\nStorage: 1PB Molecular Drive\nNetwork: Photonic Mesh v2",
+      "1. AI ChatBot: github.com/RazvanBordinc/AIChatBot\n\n2. Functional Social Media: github.com/RazvanBordinc/Fragmento\n\n3. Cryptograhic algorithm: github.com/RazvanBordinc/CustomCypher\n\n4. Interactive Portfolio: github.com/RazvanBordinc/cyber-portfolio ",
   },
   {
-    title: "Security",
+    title: "social_media",
     access: "UNAUTHORIZED",
-    password: "tango987",
+    password: "gamma213",
     content:
-      "Security protocols:\n\n1. Quantum encryption (active)\n2. Neural firewall (active)\n3. Biometric authentication (active)\n4. Behavioral analysis (active)\n5. Intrusion countermeasures (standby)\n\nWARNING: 3 unauthorized access attempts detected. Origin: 192.168.1.45",
+      "Instagram: \ninstagram.com/rasvanz5\n\n - currently active only on Instagram",
   },
   {
     title: "passwords",
     access: "AUTHORIZED",
     content:
-      "System resources:\n\nCPU usage: 24%\nMemory allocation: 41%\nStorage capacity: 68%\nNetwork bandwidth: 32%\nPower consumption: 19kW",
+      "social_media:\n\ntext: \n54A1E0EFAD53EF4F81E54153ABB4A250927E83DFAA521E2D9AFE961254314A0FF8021720A577B9A4B01DC6C056E2BB019458A71C8F945B182ED3EE05362B2F1E\nkey:\nC1n/TRQHTkJZOXn7P97blVQ+HefwVJ1USKJczj7Jo0pxXkYSU7mfj2th/ny7M9Xc+5JBJCC/BXabRBRBL28357GqhKfeWuUaFHpVSVyoMIolaqVw6jHe3E7Nb0488s6UPGcKv6k/6+nMD0Gh4kYAWo4kr9BOL6wOvBt+euJFirGj4W8oopVFeol4alSXX5IgYWI55m/A1ojnqSddBAhEQ4RTsA1dr0rAdcl6g2LtR2lN+gWxRVSmOVcuY7RwRJkISSpoezGM422PwM9EtzqjLyl0ruzO3oS7VKOpSDHQqcNb94C7QIUcEkIywZLDAdGCN2LF1Tmbh0Q+0ouyuYID2A==\n\nhobbies:\n\ntext:\n1AB22F2DD48D9B978818804592F207A7A3258D6A79C51751A988FC3C8B841B7BE43AFF1D246A131FD0BAA1EC98F5591DB8D9B8DAFE44DF96D553D0EAE41A0429\ntoken:\n6tcWvj1EfpP/X7goAD3in5uKyoO0uST45uU26mX/I/hsAsUelJ57P5tQmX2gEGFDgNhklcgpMDUr8obDnqI8sqHL4gvij06EnGVzasyteVwsn0gK/8HOsqsZxhkU7nT2651go93sFx1SWptN+1MsqOtw2t5zLjyXwKRiq4Tn67ww1tsEov4tlQ1HPvP4AFYYIjplGqAmWe3P4PPufXqXURgxRsdUI7SyMmvsjos6Tpa2JV3g2LgP6qrLk1KXRJZ+Mu8EkI1+2iOOvkTNy+NrZkrfZlfE+XH+Svtsvs73RWgHOQv8t6VfvUvHKnzB7tvNcYFUQQJJVEoghiuXmI3aOg==",
   },
   {
     title: "hobbies",
@@ -188,7 +188,7 @@ export default function FileManager() {
 
   return (
     <motion.div
-      className="border-2 rounded border-emerald-700 w-full lg:w-3/5 h-full lg:h-3/5 relative overflow-hidden bg-emerald-700/10"
+      className="border-2 rounded border-emerald-700 w-full lg:w-3/5 relative overflow-hidden bg-emerald-700/10"
       initial={{ opacity: 0 }}
       animate={{
         opacity: 1,
@@ -448,7 +448,13 @@ export default function FileManager() {
                       animate={{ opacity: 1 }}
                       transition={{ delay: 0.2 }}
                     >
-                      <pre className="whitespace-pre-wrap">
+                      <pre
+                        className={`whitespace-pre-wrap ${
+                          folderState[selectedFolder].content.includes("key")
+                            ? "flex-wrap flex break-all"
+                            : ""
+                        }`}
+                      >
                         {folderState[selectedFolder].content}
                       </pre>
                     </motion.div>

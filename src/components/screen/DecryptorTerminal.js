@@ -53,6 +53,7 @@ export default function DecryptorTerminal() {
     let decryptedResult;
     try {
       decryptedResult = decryptFunction(text, key);
+
       if (!decryptedResult) {
         setIsDecrypting(false);
         setAccessStatus("INVALID KEY OR DATA");
@@ -87,7 +88,7 @@ export default function DecryptorTerminal() {
 
   return (
     <motion.div
-      className="border-2 rounded border-emerald-700 h-full lg:h-3/5 w-full lg:w-2/5 relative overflow-hidden bg-emerald-700/10"
+      className="border-2 rounded border-emerald-700 w-full lg:w-2/5 relative overflow-hidden bg-emerald-700/10"
       initial={{ opacity: 0 }}
       animate={{ opacity: 1 }}
       transition={{ duration: 0.5 }}
