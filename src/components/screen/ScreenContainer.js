@@ -12,7 +12,7 @@ export default function ScreenContainer({ folderData }) {
         <DecryptorTerminal />
       </div>
       <div className="flex lg:flex-row flex-col gap-5 w-full h-2/5 tracking-wider font-bold text-xl pt-5 ">
-        <AITerminal />
+        <AITerminal folderData={folderData} />
       </div>
     </div>
   );

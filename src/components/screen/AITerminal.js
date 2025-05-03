@@ -1,108 +1,41 @@
 "use client";
 
 import React, { useState, useEffect, useRef } from "react";
-import { motion, AnimatePresence } from "framer-motion";
+import { motion } from "framer-motion";
 import { Terminal, ArrowRight, Cpu } from "lucide-react";
 
-// Interesting terminal prefixes
-const PREFIXES = [
-  "quantum@nexus",
-  "cypher@mainframe",
-  "neo@matrix",
-  "ghost@shell",
-  "root@cyberdeck",
-  "hacker@grid",
-  "user@virtual",
-  "sentinel@network",
-  "void@singularity",
-  "echo@system",
-];
-
-// Simulated AI responses
-const AI_RESPONSES = [
-  {
-    command: "help",
-    response: `Available commands:
-- help: Display this help message
-- status: Check system status
-- scan: Scan for vulnerabilities
-- decrypt: Attempt to decrypt a file
-- analyze: Analyze current network traffic
-- trace: Trace signal origin
-- breach: Attempt system breach (unauthorized)
-- exit: Terminate session`,
-  },
-  {
-    command: "status",
-    response: `System status:
-- Neural core: ONLINE
-- Quantum modules: ACTIVE
-- Data buffers: 72% CAPACITY
-- Network interfaces: 4 CONNECTED
-- Security level: ENHANCED
-- Anomaly detection: RUNNING
-- Last update: 4 HOURS AGO`,
-  },
-  {
-    command: "scan",
-    response: `Scanning system...
-[■■■■■■■■■■] 100%
-
-Potential vulnerabilities detected:
-- Port 8742: Unpatched service
-- Node Alpha: Outdated encryption
-- Memory sector B7: Unusual pattern detected
-- Firewall rule #42: Possible bypass vector
-
-Recommend immediate security update.`,
-  },
-  {
-    command: "analyze",
-    response: `Network traffic analysis:
-Total packets: 42,891
-Suspicious packets: 17
-Unknown origins: 3
-Encryption protocols: VARIED
-
-HIGH TRAFFIC detected from 192.168.0.7
-ANOMALY detected in data stream 0xF7C9A
-Recommend enhanced monitoring.`,
-  },
-];
+// Terminal prefix
+const PREFIX = "root@cyberdeck";
 
 // Thinking animation characters
 const THINKING_CHARS = ["-", "\\", "|", "/"];
 
-// ASCII art for different screen sizes
-const ASCII_ART = {
-  large: `  _    ___ _____ ____ ____  __  __ ___ _   _    _    _     
- / \\  |_ _|_   _/ ___|  _ \\|  \\/  |_ _| \\ | |  / \\  | |    
-/ _ \\  | |  | || |   | |_) | |\\/| || ||  \\| | / _ \\ | |    
-/ ___ \\ | |  | || |___|  _ <| |  | || || |\\  |/ ___ \\| |___ 
-/_/   \\_\\___| |_|\\____|_| \\_\\_|  |_|___|_| \\_/_/   \\_\\_____|
-                                                            `,
-  small: `
-█▀█ █   ▀█▀ █▀▀ █▀█ █▀▄▀█ █ █▄░█ █▀█ █░░
-█▀█ █    █  █▀▀ █▀▄ █░▀░█ █ █░▀█ █▀█ █▄▄
-`,
-};
+// Smaller, mobile-friendly ASCII art
+const ASCII_ART = `
+_______  ______  _____   __  __  _____  _   _            _      
+|__   __||  ____||  __ \\ |  \\/  ||_   _|| \\ | |    /\\    | |     
+   | |   | |__   | |__) || \\  / |  | |  |  \\| |   /  \\   | |     
+   | |   |  __|  |  _  / | |\\/| |  | |  | . \` |  / /\\ \\  | |     
+   | |   | |____ | | \\ \\ | |  | | _| |_ | |\\  | / ____ \\ | |____ 
+   |_|   |______||_|  \\_\\|_|  |_||_____||_| \\_|/_/    \\_\\|______|
+                                                                 
+                                                                 
+`;
 
-export default function AITerminal() {
+export default function AITerminal({ folderData = [] }) {
   const [input, setInput] = useState("");
   const [history, setHistory] = useState([]);
   const [isThinking, setIsThinking] = useState(false);
   const [thinkingChar, setThinkingChar] = useState(THINKING_CHARS[0]);
-  const [currentPrefix, setCurrentPrefix] = useState(PREFIXES[0]);
   const [windowWidth, setWindowWidth] = useState(null);
   const terminalRef = useRef(null);
   const inputRef = useRef(null);
+  const [hasInitialized, setHasInitialized] = useState(false);
+  const [helpInitialized, setHelpInitialized] = useState(false);
 
   // Set initial window width and handle window resize
   useEffect(() => {
-    // Only run on client side
     if (typeof window === "undefined") return;
-
-    // Set initial window width
     setWindowWidth(window.innerWidth);
 
     const handleResize = () => {
@@ -129,43 +62,75 @@ export default function AITerminal() {
         const currentIndex = THINKING_CHARS.indexOf(prev);
         return THINKING_CHARS[(currentIndex + 1) % THINKING_CHARS.length];
       });
-    }, 150);
+    }, 100);
 
     return () => clearInterval(interval);
   }, [isThinking]);
 
+  useEffect(() => {
+    if (!hasInitialized && folderData.length > 0) {
+      setHasInitialized(true);
+
+      setTimeout(() => {
+        handleCommand("help");
+      }, 3500);
+    }
+  }, [folderData, hasInitialized]);
+
+  // Generate help response from GitHub data
+  const generateHelpResponse = () => {
+    let response = "Available commands:\n\n";
+
+    folderData.forEach((folder) => {
+      response += `- ${folder.title}: Access ${folder.title} information\n`;
+    });
+
+    response += "\nNote: Some files may require decryption";
+    return response;
+  };
+
   // Handle command submission
-  const handleSubmit = (e) => {
-    e.preventDefault();
-    if (!input.trim() || isThinking) return;
+  const handleCommand = (command) => {
+    const trimmedCommand = command.toLowerCase().trim();
 
     // Add user command to history
     const userCommand = {
       type: "user",
-      content: input,
-      prefix: currentPrefix,
+      content: trimmedCommand,
+      prefix: PREFIX,
     };
 
     setHistory((prev) => [...prev, userCommand]);
     setInput("");
     setIsThinking(true);
 
-    // Generate new random prefix for next command
-    setCurrentPrefix(PREFIXES[Math.floor(Math.random() * PREFIXES.length)]);
-
     // Simulate AI thinking and response
-    const thinkTime = 1000 + Math.random() * 2000;
+    const thinkTime = 800 + Math.random() * 1500;
     setTimeout(() => {
-      // Find matching response or use default
       let aiResponse;
-      const matchedResponse = AI_RESPONSES.find((r) =>
-        input.toLowerCase().includes(r.command.toLowerCase())
-      );
 
-      if (matchedResponse) {
-        aiResponse = matchedResponse.response;
+      if (trimmedCommand === "help") {
+        aiResponse = generateHelpResponse();
       } else {
-        aiResponse = `Command "${input}" not recognized. Type "help" for available commands.`;
+        // Check if command matches a folder title
+        const matchedFolder = folderData.find(
+          (folder) =>
+            folder.title.toLowerCase().replace(/_/g, "").replace(/\s+/g, "") ===
+            trimmedCommand.replace(/_/g, "").replace(/\s+/g, "")
+        );
+
+        if (matchedFolder) {
+          if (
+            matchedFolder.access === "UNAUTHORIZED" &&
+            !matchedFolder.unlocked
+          ) {
+            aiResponse = `Access denied: "${matchedFolder.title}" requires authentication\nUse the File Manager to decrypt this file first`;
+          } else {
+            aiResponse = `${matchedFolder.title}:\n\n${matchedFolder.content}`;
+          }
+        } else {
+          aiResponse = `Command "${trimmedCommand}" not recognized. Type "help" for available commands.`;
+        }
       }
 
       // Add AI response to history
@@ -181,15 +146,28 @@ export default function AITerminal() {
     }, thinkTime);
   };
 
-  // Focus input when clicking anywhere in the terminal
-  const handleTerminalClick = () => {
+  const handleSubmit = (e) => {
+    e.preventDefault();
+    if (!input.trim() || isThinking) return;
+    handleCommand(input);
+  };
+
+  // Fix text selection issues by only focusing when clicking on empty space
+  const handleTerminalClick = (e) => {
+    // Don't interfere with text selection or if clicking on interactive elements
+    if (
+      window.getSelection().toString() ||
+      e.target.tagName === "INPUT" ||
+      e.target.tagName === "BUTTON"
+    ) {
+      return;
+    }
+
     if (inputRef.current && !isThinking) {
       inputRef.current.focus();
     }
   };
 
-  // Determine which ASCII art to show based on screen size
-  // Default to small ASCII until windowWidth is measured
   const showLargeAscii = windowWidth ? windowWidth >= 768 : false;
 
   return (
@@ -232,22 +210,14 @@ export default function AITerminal() {
         >
           {/* Welcome message */}
           <div className="text-emerald-500 mb-4">
-            {showLargeAscii ? (
-              <pre className="font-mono whitespace-pre-wrap text-xs overflow-x-auto sm:text-sm sm:overflow-visible">
-                {ASCII_ART.large}
-              </pre>
-            ) : (
-              <div className="text-center py-1">
-                <pre className="font-mono text-xs inline-block text-emerald-400">
-                  {ASCII_ART.small}
-                </pre>
-              </div>
-            )}
+            <pre className="font-mono whitespace-pre text-center hidden md:flex">
+              {ASCII_ART}
+            </pre>
             <p className="mt-2 mb-4 text-xs">
               Advanced Intelligence Terminal v3.7 [Initialized]
             </p>
             <p className="text-emerald-300 text-xs">
-              Type "help" for available commands
+              Loading available commands...
             </p>
           </div>
 
@@ -289,7 +259,7 @@ export default function AITerminal() {
       >
         <div className="flex items-center px-2 sm:px-4 py-2">
           <span className="text-yellow-500 mr-2 text-xs sm:text-sm truncate max-w-[100px] sm:max-w-none">
-            {currentPrefix}:~$
+            {PREFIX}:~$
           </span>
           <input
             ref={inputRef}
