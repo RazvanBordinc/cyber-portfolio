@@ -2,7 +2,7 @@ import React from "react";
 
 import FileManager from "./FileManager";
 import DecryptorTerminal from "./DecryptorTerminal";
-import LoadingWave from "../prototypes/LoadingWave";
+
 import AITerminal from "./AITerminal";
 
 export default function ScreenContainer() {

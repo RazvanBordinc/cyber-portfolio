@@ -73,14 +73,45 @@ Recommend enhanced monitoring.`,
 // Thinking animation characters
 const THINKING_CHARS = ["-", "\\", "|", "/"];
 
+// ASCII art for different screen sizes
+const ASCII_ART = {
+  large: `  _    ___ _____ ____ ____  __  __ ___ _   _    _    _     
+ / \\  |_ _|_   _/ ___|  _ \\|  \\/  |_ _| \\ | |  / \\  | |    
+/ _ \\  | |  | || |   | |_) | |\\/| || ||  \\| | / _ \\ | |    
+/ ___ \\ | |  | || |___|  _ <| |  | || || |\\  |/ ___ \\| |___ 
+/_/   \\_\\___| |_|\\____|_| \\_\\_|  |_|___|_| \\_/_/   \\_\\_____|
+                                                            `,
+  small: `
+█▀█ █   ▀█▀ █▀▀ █▀█ █▀▄▀█ █ █▄░█ █▀█ █░░
+█▀█ █    █  █▀▀ █▀▄ █░▀░█ █ █░▀█ █▀█ █▄▄
+`,
+};
+
 export default function AITerminal() {
   const [input, setInput] = useState("");
   const [history, setHistory] = useState([]);
   const [isThinking, setIsThinking] = useState(false);
   const [thinkingChar, setThinkingChar] = useState(THINKING_CHARS[0]);
   const [currentPrefix, setCurrentPrefix] = useState(PREFIXES[0]);
+  const [windowWidth, setWindowWidth] = useState(null);
   const terminalRef = useRef(null);
   const inputRef = useRef(null);
+
+  // Set initial window width and handle window resize
+  useEffect(() => {
+    // Only run on client side
+    if (typeof window === "undefined") return;
+
+    // Set initial window width
+    setWindowWidth(window.innerWidth);
+
+    const handleResize = () => {
+      setWindowWidth(window.innerWidth);
+    };
+
+    window.addEventListener("resize", handleResize);
+    return () => window.removeEventListener("resize", handleResize);
+  }, []);
 
   // Auto-scroll to bottom when history updates
   useEffect(() => {
@@ -157,19 +188,24 @@ export default function AITerminal() {
     }
   };
 
+  // Determine which ASCII art to show based on screen size
+  // Default to small ASCII until windowWidth is measured
+  const showLargeAscii = windowWidth ? windowWidth >= 768 : false;
+
   return (
     <motion.div
-      className="border-2 rounded border-emerald-700 w-full h-full relative overflow-hidden bg-emerald-900/10"
+      className="border-2 rounded border-emerald-700 w-full max-w-full h-full min-h-[300px] relative overflow-hidden bg-emerald-900/10 flex flex-col"
+      style={{ colorScheme: "dark" }}
       initial={{ opacity: 0 }}
       animate={{ opacity: 1 }}
       transition={{ duration: 0.5 }}
       onClick={handleTerminalClick}
     >
       {/* Terminal header */}
-      <div className="w-full h-10 border-b-2 flex items-center justify-between border-emerald-700 text-emerald-300 px-5">
+      <div className="w-full h-10 border-b-2 flex items-center justify-between border-emerald-700 text-emerald-300 px-3 md:px-5 shrink-0">
         <div className="flex items-center gap-2">
           <Terminal size={16} />
-          <span>AI Terminal</span>
+          <span className="text-sm md:text-base truncate">AI Terminal</span>
         </div>
         <motion.div
           animate={{ opacity: isThinking ? [0.5, 1] : 1 }}
@@ -187,7 +223,7 @@ export default function AITerminal() {
       {/* Terminal content area */}
       <div
         ref={terminalRef}
-        className="p-4 h-[calc(100%-5rem)] overflow-y-auto text-emerald-400 text-sm font-mono"
+        className="p-2 sm:p-4 flex-grow overflow-y-auto text-emerald-400 text-xs sm:text-sm font-mono"
       >
         <motion.div
           initial={{ opacity: 0 }}
@@ -196,15 +232,18 @@ export default function AITerminal() {
         >
           {/* Welcome message */}
           <div className="text-emerald-500 mb-4">
-            <pre className="font-mono whitespace-pre-wrap text-xs sm:text-sm">
-              {`  _    ___ _____ ____ ____  __  __ ___ _   _    _    _     
- / \\  |_ _|_   _/ ___|  _ \\|  \\/  |_ _| \\ | |  / \\  | |    
-/ _ \\  | |  | || |   | |_) | |\\/| || ||  \\| | / _ \\ | |    
-/ ___ \\ | |  | || |___|  _ <| |  | || || |\\  |/ ___ \\| |___ 
-/_/   \\_\\___| |_|\\____|_| \\_\\_|  |_|___|_| \\_/_/   \\_\\_____|
-                                                            `}
-            </pre>
-            <p className="mt-2 mb-4 text-xs sm:text-sm">
+            {showLargeAscii ? (
+              <pre className="font-mono whitespace-pre-wrap text-xs overflow-x-auto sm:text-sm sm:overflow-visible">
+                {ASCII_ART.large}
+              </pre>
+            ) : (
+              <div className="text-center py-1">
+                <pre className="font-mono text-xs inline-block text-emerald-400">
+                  {ASCII_ART.small}
+                </pre>
+              </div>
+            )}
+            <p className="mt-2 mb-4 text-xs">
               Advanced Intelligence Terminal v3.7 [Initialized]
             </p>
             <p className="text-emerald-300 text-xs">
@@ -216,12 +255,12 @@ export default function AITerminal() {
           {history.map((entry, index) => (
             <div key={index} className="mb-3">
               {entry.type === "user" ? (
-                <div className="text-emerald-400">
+                <div className="text-emerald-400 break-words">
                   <span className="text-yellow-500">{entry.prefix}:~$ </span>
                   {entry.content}
                 </div>
               ) : (
-                <div className="text-emerald-300 pl-4 mt-1 whitespace-pre-wrap">
+                <div className="text-emerald-300 pl-2 sm:pl-4 mt-1 whitespace-pre-wrap break-words">
                   {entry.content}
                 </div>
               )}
@@ -246,10 +285,10 @@ export default function AITerminal() {
       {/* Input area */}
       <form
         onSubmit={handleSubmit}
-        className="absolute bottom-0 w-full border-t-2 border-emerald-700 bg-black/30"
+        className="w-full border-t-2 border-emerald-700 bg-black/30 shrink-0"
       >
-        <div className="flex items-center px-4 py-2">
-          <span className="text-yellow-500 mr-2 text-sm">
+        <div className="flex items-center px-2 sm:px-4 py-2">
+          <span className="text-yellow-500 mr-2 text-xs sm:text-sm truncate max-w-[100px] sm:max-w-none">
             {currentPrefix}:~$
           </span>
           <input
@@ -258,7 +297,7 @@ export default function AITerminal() {
             value={input}
             onChange={(e) => setInput(e.target.value)}
             disabled={isThinking}
-            className="flex-1 bg-transparent text-emerald-400 outline-none text-sm"
+            className="flex-1 bg-transparent text-emerald-400 outline-none text-xs sm:text-sm min-w-0"
             placeholder={isThinking ? "AI processing..." : "Enter command..."}
           />
           <motion.button

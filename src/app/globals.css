@@ -1,1 +1,57 @@
 @import "tailwindcss";
+/* Emerald-700 Scrollbar Styling */
+
+/* For Webkit browsers (Chrome, Safari, newer versions of Edge) */
+::-webkit-scrollbar {
+  width: 10px;
+  height: 10px;
+}
+
+::-webkit-scrollbar-track {
+  background: rgba(6, 78, 59, 0.2); /* emerald-900 with opacity */
+  border-radius: 4px;
+}
+
+::-webkit-scrollbar-thumb {
+  background: #047857; /* emerald-700 */
+  border-radius: 4px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: #059669; /* emerald-600 */
+}
+
+/* For Firefox */
+* {
+  scrollbar-width: thin;
+  scrollbar-color: #047857 rgba(6, 78, 59, 0.2); /* emerald-700 thumb and emerald-900 track */
+}
+
+/* To apply only to specific elements, use a class instead of the global selector */
+.emerald-scrollbar {
+  /* Firefox */
+  scrollbar-width: thin;
+  scrollbar-color: #047857 rgba(6, 78, 59, 0.2);
+
+  /* For other browsers, you'll need to add the webkit selectors to the specific element */
+}
+
+/* Example usage with a class */
+.emerald-scrollbar::-webkit-scrollbar {
+  width: 10px;
+  height: 10px;
+}
+
+.emerald-scrollbar::-webkit-scrollbar-track {
+  background: rgba(6, 78, 59, 0.2);
+  border-radius: 4px;
+}
+
+.emerald-scrollbar::-webkit-scrollbar-thumb {
+  background: #047857;
+  border-radius: 4px;
+}
+
+.emerald-scrollbar::-webkit-scrollbar-thumb:hover {
+  background: #059669;
+}

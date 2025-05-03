@@ -63,10 +63,10 @@ const folders = [
   },
 
   {
-    title: "project_links",
+    title: "projects_links",
     access: "AUTHORIZED",
     content:
-      "1. AI ChatBot: github.com/RazvanBordinc/AIChatBot\n\n2. Functional Social Media: github.com/RazvanBordinc/Fragmento\n\n3. Cryptograhic algorithm: github.com/RazvanBordinc/CustomCypher\n\n4. Interactive Portfolio: github.com/RazvanBordinc/cyber-portfolio ",
+      "1. AI ChatBot:\n github.com/RazvanBordinc/AIChatBot\n\n2. Functional Social Media:\n github.com/RazvanBordinc/Fragmento\n\n3. Cryptograhic algorithm:\n github.com/RazvanBordinc/CustomCypher\n\n4. Interactive Portfolio:\n github.com/RazvanBordinc/cyber-portfolio ",
   },
   {
     title: "social_media",
@@ -450,7 +450,10 @@ export default function FileManager() {
                     >
                       <pre
                         className={`whitespace-pre-wrap ${
-                          folderState[selectedFolder].content.includes("key")
+                          folderState[selectedFolder].content.includes("key") ||
+                          folderState[selectedFolder].content.includes(
+                            "github.com"
+                          )
                             ? "flex-wrap flex break-all"
                             : ""
                         }`}
