@@ -10,105 +10,56 @@ import {
   ChevronLeft,
 } from "lucide-react";
 import { motion, AnimatePresence } from "framer-motion";
+import dynamic from "next/dynamic";
 
-// Enhanced folders with content, password, and access status
-const folders = [
+// Default folders as fallback if remote data fails to load
+const defaultFolders = [
   {
-    title: "how_to_use",
+    title: "error_fetching",
     access: "AUTHORIZED",
-    content:
-      " - click on a folder to see its content\n\n - if the folder is locked, decrypt its password from passwords folder in the decrypt terminal\n\n - if you want to go back, click on the back button\n\n - to see the projects on github go to projects_links",
-  },
-  {
-    title: "projects",
-    access: "AUTHORIZED",
-    content:
-      "1. AI ChatBot\n - connected to my github\n - can answer anything about me\n\n2. Functional Social Media\n - can post,comment,like,rate,etc\n - recommendation algorithm\n\n3. Cryptographic algorithm\n - using Feistel Network and CBC\n\n4. Interactive Portfolio\n - uses certain parts of (1 & 3)\n\n5. Private medical system\n - is not publicly available",
-  },
-  {
-    title: "tech_skills",
-    access: "AUTHORIZED",
-    content:
-      "BACKEND:\n - .NET Core (web api)\n - Entity Framework\n - SQL Server\n - LINQ\n - basic JWT\n - basic Redis\n - REST\n - Session\n - Scalability\n - Rate Limiting\n - Roles\n - OOP\n\nFRONTEND:\n - React\n - Next.js\n - Tailwind CSS\n - Framer Motion\n - Zustand\n - many component libraries\n - Adobe Illustrator\n - Figma\n\nTOOLS:\n - Docker\n - Git\n - Postman\n - Swagger\n - VS\n - VSC\n\nOTHER:\n - strong prompt engineering skills\n - little knowledge of AI\n - little knowledge of Security\n - little knowledge of Cryptography",
-  },
-  {
-    title: "soft_skills",
-    access: "AUTHORIZED",
-    content:
-      "Strengths:\n\n1. Problem-solving\n2. Critical thinking\n3. Creative thinking\n4. Abstract thinking\n5. Fast processing\n6. Adaptability\n7. Good strategist\n\nWeaknesses:\n\n1. Public speaking\n2. Competitiveness\n3. Anxiety\n4. No experience in teams",
-  },
-  {
-    title: "interests",
-    access: "AUTHORIZED",
-    content:
-      "Defending, competing and defeating AI using AI\n\nIn the future, I aspire to pursue opportunities in one of the following areas:\n\n - App Security\n - AI\n - Cryptography - PQC/QC\n - Leadership/Management",
-  },
-  {
-    title: "experience",
-    access: "AUTHORIZED",
-    content:
-      " - creating my own startup (weekends)\n\n - worked on my own projects\n\n - no experience in working in teams or companies\n\n - 2nd year of university (INFORMATICS - UPT ROMANIA)\n\n - self-taught for 4 years",
-  },
-  {
-    title: "about_me",
-    access: "AUTHORIZED",
-    content:
-      " Hi! I'm Razvan Bordinc!\n\n - I'm a 21 years old Software Engineer from Romania, Timisoara\n\n - Looking for remote, on-site or hybrid opportunities\n\n - Full-time, part-time or internships",
-  },
-  {
-    title: "contact",
-    access: "AUTHORIZED",
-    content:
-      "Email: razvan.bordinc@yahoo.com\n\nGithub: github.com/RazvanBordinc\n\nLinkedIn: linkedin.com/in/valentin-r%C4%83zvan-bord%C3%AEnc-30686a298/",
-  },
-
-  {
-    title: "projects_links",
-    access: "AUTHORIZED",
-    content:
-      "1. AI ChatBot:\n github.com/RazvanBordinc/AIChatBot\n\n2. Functional Social Media:\n github.com/RazvanBordinc/Fragmento\n\n3. Cryptograhic algorithm:\n github.com/RazvanBordinc/CustomCypher\n\n4. Interactive Portfolio:\n github.com/RazvanBordinc/cyber-portfolio ",
-  },
-  {
-    title: "social_media",
-    access: "UNAUTHORIZED",
-    password: "gamma213",
-    content:
-      "Instagram: \ninstagram.com/rasvanz5\n\n - currently active only on Instagram",
-  },
-  {
-    title: "passwords",
-    access: "AUTHORIZED",
-    content:
-      "social_media:\n\ntext: \n54A1E0EFAD53EF4F81E54153ABB4A250927E83DFAA521E2D9AFE961254314A0FF8021720A577B9A4B01DC6C056E2BB019458A71C8F945B182ED3EE05362B2F1E\nkey:\nC1n/TRQHTkJZOXn7P97blVQ+HefwVJ1USKJczj7Jo0pxXkYSU7mfj2th/ny7M9Xc+5JBJCC/BXabRBRBL28357GqhKfeWuUaFHpVSVyoMIolaqVw6jHe3E7Nb0488s6UPGcKv6k/6+nMD0Gh4kYAWo4kr9BOL6wOvBt+euJFirGj4W8oopVFeol4alSXX5IgYWI55m/A1ojnqSddBAhEQ4RTsA1dr0rAdcl6g2LtR2lN+gWxRVSmOVcuY7RwRJkISSpoezGM422PwM9EtzqjLyl0ruzO3oS7VKOpSDHQqcNb94C7QIUcEkIywZLDAdGCN2LF1Tmbh0Q+0ouyuYID2A==\n\nhobbies:\n\ntext:\n1AB22F2DD48D9B978818804592F207A7A3258D6A79C51751A988FC3C8B841B7BE43AFF1D246A131FD0BAA1EC98F5591DB8D9B8DAFE44DF96D553D0EAE41A0429\ntoken:\n6tcWvj1EfpP/X7goAD3in5uKyoO0uST45uU26mX/I/hsAsUelJ57P5tQmX2gEGFDgNhklcgpMDUr8obDnqI8sqHL4gvij06EnGVzasyteVwsn0gK/8HOsqsZxhkU7nT2651go93sFx1SWptN+1MsqOtw2t5zLjyXwKRiq4Tn67ww1tsEov4tlQ1HPvP4AFYYIjplGqAmWe3P4PPufXqXURgxRsdUI7SyMmvsjos6Tpa2JV3g2LgP6qrLk1KXRJZ+Mu8EkI1+2iOOvkTNy+NrZkrfZlfE+XH+Svtsvs73RWgHOQv8t6VfvUvHKnzB7tvNcYFUQQJJVEoghiuXmI3aOg==",
-  },
-  {
-    title: "hobbies",
-    access: "UNAUTHORIZED",
-    password: "delta654",
-    content:
-      " - Chess\n - Trips\n - Movies, TV Series, Anime\n - Music\n - Gym\n - Watches\n - Fragrances",
+    content: "error fetching from github",
   },
 ];
 
-export default function FileManager() {
+// Import loading skeleton component dynamically to avoid SSR issues
+const LoadingDataSkeleton = dynamic(
+  () => import("@/components/shared/LoadingDataSkeleton"),
+  {
+    ssr: false,
+  }
+);
+
+export default function FileManager({ folderData }) {
   // State management
   const [selectedFolder, setSelectedFolder] = useState(null);
   const [passwordInput, setPasswordInput] = useState("");
-  const [folderState, setFolderState] = useState(
-    folders.map((folder) => ({
-      ...folder,
-      unlocked: folder.access === "AUTHORIZED" ? true : false,
-    }))
-  );
+  const [folderState, setFolderState] = useState([]);
   const [isClient, setIsClient] = useState(false);
   const [hackEffect, setHackEffect] = useState(false);
   const [passwordError, setPasswordError] = useState(false);
   const [shakeKey, setShakeKey] = useState(0); // Key to force re-render for shake animation
   const [showMobileFolders, setShowMobileFolders] = useState(true);
+  const [isLoading, setIsLoading] = useState(true);
 
   // Initialize client-side effects and handle window resize
   useEffect(() => {
     setIsClient(true);
+
+    // Process the folderData or use default
+    const folders = folderData || defaultFolders;
+
+    // Initialize folder state with unlocked status
+    setFolderState(
+      folders.map((folder) => ({
+        ...folder,
+        unlocked: folder.access === "AUTHORIZED" ? true : false,
+      }))
+    );
+
+    // Simulate loading to show animation briefly
+    const timer = setTimeout(() => {
+      setIsLoading(false);
+    }, 800);
 
     // Handle initial selection based on screen size
     const handleResize = () => {
@@ -126,8 +77,11 @@ export default function FileManager() {
     window.addEventListener("resize", handleResize);
 
     // Cleanup
-    return () => window.removeEventListener("resize", handleResize);
-  }, [selectedFolder]);
+    return () => {
+      window.removeEventListener("resize", handleResize);
+      clearTimeout(timer); // Clean up the timer to prevent memory leaks
+    };
+  }, [folderData, selectedFolder]);
 
   // Handle folder selection
   const handleFolderClick = useCallback((index) => {
@@ -186,12 +140,15 @@ export default function FileManager() {
     setShowMobileFolders(true);
   }, []);
 
+  // Show loading skeleton during initial load
+  if (isLoading) {
+    return <LoadingDataSkeleton />;
+  }
+
   return (
     <motion.div
       className="border-2 rounded border-emerald-700 w-full lg:w-3/5 relative overflow-hidden bg-emerald-700/10"
-      initial={{ opacity: 0 }}
       animate={{
-        opacity: 1,
         boxShadow: hackEffect ? "0 0 15px 2px rgba(5, 150, 105, 0.5)" : "none",
       }}
       transition={{ duration: 0.3 }}
@@ -229,23 +186,16 @@ export default function FileManager() {
         {/* Folder grid */}
         <AnimatePresence mode="wait">
           {(showMobileFolders || (isClient && window.innerWidth >= 768)) && (
-            <motion.div
+            <div
               className={`w-full md:w-3/5 text-emerald-400 grid grid-cols-3 sm:grid-cols-4 md:grid-cols-3 lg:grid-cols-4 gap-2 sm:gap-4 p-4 overflow-y-auto ${
                 selectedFolder !== null ? "hidden md:grid" : ""
               } md:border-r-2 md:border-emerald-700`}
-              initial={{ opacity: 0, x: -20 }}
-              animate={{ opacity: 1, x: 0 }}
-              exit={{ opacity: 0, x: -20 }}
-              transition={{ duration: 0.2, staggerChildren: 0.05 }}
             >
               {folderState.map((folder, index) => (
                 <motion.div
                   className="flex flex-col items-center justify-center relative cursor-pointer p-2"
                   key={index}
                   onClick={() => handleFolderClick(index)}
-                  initial={{ opacity: 0, scale: 0.8 }}
-                  animate={{ opacity: 1, scale: 1 }}
-                  transition={{ type: "spring", stiffness: 300, damping: 24 }}
                   whileHover={{ scale: 1.05 }}
                   whileTap={{ scale: 0.95 }}
                 >
@@ -269,12 +219,7 @@ export default function FileManager() {
                         animate={{ scale: 1 }}
                         transition={{ type: "spring", stiffness: 500 }}
                       >
-                        <motion.div
-                          animate={{ opacity: [0.6, 1, 0.6] }}
-                          transition={{ repeat: Infinity, duration: 2 }}
-                        >
-                          <Check size={12} className="text-emerald-500" />
-                        </motion.div>
+                        <Check size={12} className="text-emerald-500" />
                       </motion.div>
                     )}
                   </div>
@@ -292,7 +237,7 @@ export default function FileManager() {
                   </span>
                 </motion.div>
               ))}
-            </motion.div>
+            </div>
           )}
         </AnimatePresence>
 
@@ -351,7 +296,6 @@ export default function FileManager() {
                     >
                       <motion.div
                         animate={{
-                          opacity: [0.7, 1, 0.7],
                           scale: [1, 1.05, 1],
                         }}
                         transition={{

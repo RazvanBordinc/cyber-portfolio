@@ -1,6 +1,8 @@
 import ScreenContainer from "@/components/screen/ScreenContainer";
-import React from "react";
+import { fetchAboutAsync } from "@/lib/data/fetchAboutAsync";
 
-export default function page() {
-  return <ScreenContainer />;
+export default async function Page() {
+  const folderData = await fetchAboutAsync();
+
+  return <ScreenContainer folderData={folderData} />;
 }
