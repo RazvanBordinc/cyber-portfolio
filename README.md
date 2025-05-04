@@ -70,8 +70,8 @@ The portfolio implements a custom encryption system based on:
 1. **Clone the repository**
 
    ```bash
-   git clone https://github.com/yourusername/cyberportfolio.git
-   cd cyberportfolio
+   git clone https://github.com/RazvanBordinc/cyber-portfolio.git
+   cd cyber-portfolio
    ```
 
 2. **Install dependencies**
