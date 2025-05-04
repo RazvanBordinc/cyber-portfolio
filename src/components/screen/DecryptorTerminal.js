@@ -3,7 +3,7 @@
 import { useState, useEffect } from "react";
 import { motion } from "framer-motion";
 import { Unlock, RefreshCw, Key } from "lucide-react";
-import { decryptFunction } from "@/lib/utils/DecryptFunction";
+import { decryptFunction } from "@/lib/utils/decryptFunction";
 
 export default function DecryptorTerminal() {
   const [text, setText] = useState("");
