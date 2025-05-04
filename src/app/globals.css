@@ -55,3 +55,7 @@
 .emerald-scrollbar::-webkit-scrollbar-thumb:hover {
   background: #059669;
 }
+::selection {
+  color: red;
+  background-color: yellow;
+}

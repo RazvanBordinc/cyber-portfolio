@@ -9,30 +9,32 @@ const shareTechMono = Share_Tech_Mono({
 });
 
 export const metadata = {
-  title: "Razvan Bordinc | Cyber Portfolio",
+  title: "Razvan Bordinc | Portfolio",
   description:
     "Interactive cyberpunk-themed portfolio showcasing software engineering skills and projects",
   keywords: [
     "portfolio",
     "developer",
     "software engineer",
-    "cyberpunk",
+    "dotnet",
     "react",
     "nextjs",
+    "fullstack",
   ],
+  icons: {
+    icon: "/favicon.ico?v=5",
+  },
 };
 
-// Next.js 15 requires themeColor to be in viewport export
 export const viewport = {
-  themeColor: "#047857", // Emerald-700 color
+  themeColor: "#047857",
 };
 
 export default function RootLayout({ children }) {
   return (
     <html lang="en" className="bg-black">
       <head>
-        {/* Favicon and other meta tags can be added here */}
-        <link rel="icon" href="/favicon.ico" />
+        <link rel="icon" href="/favicon.ico?v=3" sizes="any" />
       </head>
       <body
         className={`${shareTechMono.className} min-h-screen bg-zinc-950 overflow-x-hidden`}

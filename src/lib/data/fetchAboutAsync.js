@@ -11,9 +11,8 @@ export async function fetchAboutAsync() {
       {
         headers: {
           Accept: "application/json",
-          "Cache-Control": "no-cache, no-store, must-revalidate",
         },
-        next: { revalidate: 0 },
+        next: { revalidate: 6000 },
       }
     );
 

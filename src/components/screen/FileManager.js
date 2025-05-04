@@ -183,7 +183,6 @@ export default function FileManager({ folderData }) {
       )}
 
       <div className="text-white flex flex-col md:flex-row h-[calc(100%-2.5rem)] overflow-hidden">
-        {/* Folder grid */}
         <AnimatePresence mode="wait">
           {(showMobileFolders || (isClient && window.innerWidth >= 768)) && (
             <div
@@ -428,7 +427,7 @@ export default function FileManager({ folderData }) {
                     animate={{ opacity: 1 }}
                     transition={{ delay: 0.3 }}
                   >
-                    // System ready
+                    {"// System ready"}
                   </motion.p>
                 </motion.div>
               )}

@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useState, useEffect, useRef } from "react";
+import React, { useState, useEffect, useRef, useCallback } from "react";
 import { motion } from "framer-motion";
 import { Terminal, ArrowRight, Cpu } from "lucide-react";
 
@@ -31,7 +31,6 @@ export default function AITerminal({ folderData = [] }) {
   const terminalRef = useRef(null);
   const inputRef = useRef(null);
   const [hasInitialized, setHasInitialized] = useState(false);
-  const [helpInitialized, setHelpInitialized] = useState(false);
 
   // Set initial window width and handle window resize
   useEffect(() => {
@@ -67,18 +66,8 @@ export default function AITerminal({ folderData = [] }) {
     return () => clearInterval(interval);
   }, [isThinking]);
 
-  useEffect(() => {
-    if (!hasInitialized && folderData.length > 0) {
-      setHasInitialized(true);
-
-      setTimeout(() => {
-        handleCommand("help");
-      }, 3500);
-    }
-  }, [folderData, hasInitialized]);
-
   // Generate help response from GitHub data
-  const generateHelpResponse = () => {
+  const generateHelpResponse = useCallback(() => {
     let response = "Available commands:\n\n";
 
     folderData.forEach((folder) => {
@@ -87,64 +76,80 @@ export default function AITerminal({ folderData = [] }) {
 
     response += "\nNote: Some files may require decryption";
     return response;
-  };
+  }, [folderData]);
 
   // Handle command submission
-  const handleCommand = (command) => {
-    const trimmedCommand = command.toLowerCase().trim();
+  const handleCommand = useCallback(
+    (command) => {
+      const trimmedCommand = command.toLowerCase().trim();
 
-    // Add user command to history
-    const userCommand = {
-      type: "user",
-      content: trimmedCommand,
-      prefix: PREFIX,
-    };
+      // Add user command to history
+      const userCommand = {
+        type: "user",
+        content: trimmedCommand,
+        prefix: PREFIX,
+      };
 
-    setHistory((prev) => [...prev, userCommand]);
-    setInput("");
-    setIsThinking(true);
+      setHistory((prev) => [...prev, userCommand]);
+      setInput("");
+      setIsThinking(true);
 
-    // Simulate AI thinking and response
-    const thinkTime = 800 + Math.random() * 1500;
-    setTimeout(() => {
-      let aiResponse;
+      // Simulate AI thinking and response
+      const thinkTime = 800 + Math.random() * 1500;
+      setTimeout(() => {
+        let aiResponse;
 
-      if (trimmedCommand === "help") {
-        aiResponse = generateHelpResponse();
-      } else {
-        // Check if command matches a folder title
-        const matchedFolder = folderData.find(
-          (folder) =>
-            folder.title.toLowerCase().replace(/_/g, "").replace(/\s+/g, "") ===
-            trimmedCommand.replace(/_/g, "").replace(/\s+/g, "")
-        );
-
-        if (matchedFolder) {
-          if (
-            matchedFolder.access === "UNAUTHORIZED" &&
-            !matchedFolder.unlocked
-          ) {
-            aiResponse = `Access denied: "${matchedFolder.title}" requires authentication\nUse the File Manager to decrypt this file first`;
-          } else {
-            aiResponse = `${matchedFolder.title}:\n\n${matchedFolder.content}`;
-          }
+        if (trimmedCommand === "help") {
+          aiResponse = generateHelpResponse();
         } else {
-          aiResponse = `Command "${trimmedCommand}" not recognized. Type "help" for available commands.`;
+          // Check if command matches a folder title
+          const matchedFolder = folderData.find(
+            (folder) =>
+              folder.title
+                .toLowerCase()
+                .replace(/_/g, "")
+                .replace(/\s+/g, "") ===
+              trimmedCommand.replace(/_/g, "").replace(/\s+/g, "")
+          );
+
+          if (matchedFolder) {
+            if (
+              matchedFolder.access === "UNAUTHORIZED" &&
+              !matchedFolder.unlocked
+            ) {
+              aiResponse = `Access denied: "${matchedFolder.title}" requires authentication\nUse the File Manager to decrypt this file first`;
+            } else {
+              aiResponse = `${matchedFolder.title}:\n\n${matchedFolder.content}`;
+            }
+          } else {
+            aiResponse = `Command "${trimmedCommand}" not recognized. Type "help" for available commands.`;
+          }
         }
-      }
 
-      // Add AI response to history
-      setHistory((prev) => [
-        ...prev,
-        {
-          type: "ai",
-          content: aiResponse,
-        },
-      ]);
+        // Add AI response to history
+        setHistory((prev) => [
+          ...prev,
+          {
+            type: "ai",
+            content: aiResponse,
+          },
+        ]);
 
-      setIsThinking(false);
-    }, thinkTime);
-  };
+        setIsThinking(false);
+      }, thinkTime);
+    },
+    [folderData, generateHelpResponse]
+  );
+
+  useEffect(() => {
+    if (!hasInitialized && folderData.length > 0) {
+      setHasInitialized(true);
+
+      setTimeout(() => {
+        handleCommand("help");
+      }, 3500);
+    }
+  }, [folderData, hasInitialized, handleCommand]);
 
   const handleSubmit = (e) => {
     e.preventDefault();
@@ -213,9 +218,7 @@ export default function AITerminal({ folderData = [] }) {
             <pre className="font-mono whitespace-pre text-center hidden md:flex">
               {ASCII_ART}
             </pre>
-            <p className="mt-2 mb-4 text-xs">
-              Advanced Intelligence Terminal v3.7 [Initialized]
-            </p>
+            <p className="mt-2 mb-4 text-xs">Terminal v3.7 [Initialized]</p>
             <p className="text-emerald-300 text-xs">
               Loading available commands...
             </p>
