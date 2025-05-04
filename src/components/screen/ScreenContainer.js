@@ -2,7 +2,7 @@ import React from "react";
 
 import FileManager from "./FileManager";
 import DecryptorTerminal from "./DecryptorTerminal";
-import AITerminal from "./AITerminal";
+import Terminal from "./Terminal";
 
 export default function ScreenContainer({ folderData }) {
   return (
@@ -12,7 +12,7 @@ export default function ScreenContainer({ folderData }) {
         <DecryptorTerminal />
       </div>
       <div className="flex lg:flex-row flex-col gap-5 w-full h-2/5 tracking-wider font-bold text-xl pt-5 ">
-        <AITerminal folderData={folderData} />
+        <Terminal folderData={folderData} />
       </div>
     </div>
   );

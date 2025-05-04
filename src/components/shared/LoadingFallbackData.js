@@ -100,7 +100,7 @@ export default function LoadingFallback() {
         </motion.div>
       </div>
 
-      {/* AI Terminal Skeleton */}
+      {/* Terminal Skeleton */}
       <div className="flex lg:flex-row flex-col gap-5 w-full h-2/5 tracking-wider font-bold text-xl pt-5">
         <motion.div
           className="border-2 rounded border-emerald-700 w-full max-w-full h-full min-h-[300px] relative overflow-hidden bg-emerald-900/10 flex flex-col"
@@ -110,7 +110,7 @@ export default function LoadingFallback() {
         >
           <div className="w-full h-10 border-b-2 flex items-center justify-between border-emerald-700 text-emerald-300 px-3 md:px-5 shrink-0">
             <div className="flex items-center gap-2">
-              <span className="text-sm md:text-base truncate">AI Terminal</span>
+              <span className="text-sm md:text-base truncate">Terminal</span>
             </div>
             <motion.div
               animate={{ opacity: [0.5, 1] }}

@@ -2,7 +2,7 @@
 
 import React, { useState, useEffect, useRef, useCallback } from "react";
 import { motion } from "framer-motion";
-import { Terminal, ArrowRight, Cpu } from "lucide-react";
+import { Terminal as terminal, ArrowRight, Cpu } from "lucide-react";
 
 // Terminal prefix
 const PREFIX = "root@cyberdeck";
@@ -22,7 +22,7 @@ _______  ______  _____   __  __  _____  _   _            _
                                                                  
 `;
 
-export default function AITerminal({ folderData = [] }) {
+export default function Terminal({ folderData = [] }) {
   const [input, setInput] = useState("");
   const [history, setHistory] = useState([]);
   const [isThinking, setIsThinking] = useState(false);
@@ -94,13 +94,13 @@ export default function AITerminal({ folderData = [] }) {
       setInput("");
       setIsThinking(true);
 
-      // Simulate AI thinking and response
+      // Simulate system thinking and response
       const thinkTime = 800 + Math.random() * 1500;
       setTimeout(() => {
-        let aiResponse;
+        let responseBack;
 
         if (trimmedCommand === "help") {
-          aiResponse = generateHelpResponse();
+          responseBack = generateHelpResponse();
         } else {
           // Check if command matches a folder title
           const matchedFolder = folderData.find(
@@ -117,21 +117,20 @@ export default function AITerminal({ folderData = [] }) {
               matchedFolder.access === "UNAUTHORIZED" &&
               !matchedFolder.unlocked
             ) {
-              aiResponse = `Access denied: "${matchedFolder.title}" requires authentication\nUse the File Manager to decrypt this file first`;
+              responseBack = `Access denied: "${matchedFolder.title}" requires authentication\nUse the File Manager to decrypt this file first`;
             } else {
-              aiResponse = `${matchedFolder.title}:\n\n${matchedFolder.content}`;
+              responseBack = `${matchedFolder.title}:\n\n${matchedFolder.content}`;
             }
           } else {
-            aiResponse = `Command "${trimmedCommand}" not recognized. Type "help" for available commands.`;
+            responseBack = `Command "${trimmedCommand}" not recognized. Type "help" for available commands.`;
           }
         }
 
-        // Add AI response to history
         setHistory((prev) => [
           ...prev,
           {
-            type: "ai",
-            content: aiResponse,
+            type: "system",
+            content: responseBack,
           },
         ]);
 
@@ -187,7 +186,7 @@ export default function AITerminal({ folderData = [] }) {
       {/* Terminal header */}
       <div className="w-full h-10 border-b-2 flex items-center justify-between border-emerald-700 text-emerald-300 px-3 md:px-5 shrink-0">
         <div className="flex items-center gap-2">
-          <Terminal size={16} />
+          <terminal size={16} />
           <span className="text-sm md:text-base truncate">AI Terminal</span>
         </div>
         <motion.div
@@ -271,7 +270,7 @@ export default function AITerminal({ folderData = [] }) {
             onChange={(e) => setInput(e.target.value)}
             disabled={isThinking}
             className="flex-1 bg-transparent text-emerald-400 outline-none text-xs sm:text-sm min-w-0"
-            placeholder={isThinking ? "AI processing..." : "Enter command..."}
+            placeholder={isThinking ? "Processing..." : "Enter command..."}
           />
           <motion.button
             type="submit"
