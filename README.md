@@ -1,6 +1,7 @@
 # CyberPortfolio
 
 An interactive cyberpunk-themed portfolio showcasing software engineering skills and projects with a custom cryptographic system.
+![PortofAI Banner](./public/banner.png)
 
 <div align="center">
   <img src="https://img.shields.io/badge/Next.js-15.3.1-black" alt="Next.js" />

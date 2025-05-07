@@ -1,6 +1,6 @@
 /**
  * Fetches structured data about the portfolio owner from GitHub
- * with caching for 10 minutes (600 seconds)
+ * with caching for 1 minute (60 seconds)
  *
  * @returns {Promise<Array>} Array of folder objects or null if error
  */
@@ -12,7 +12,7 @@ export async function fetchAboutAsync() {
         headers: {
           Accept: "application/json",
         },
-        next: { revalidate: 6000 },
+        next: { revalidate: 60 },
       }
     );
 
