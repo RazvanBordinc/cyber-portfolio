@@ -2,7 +2,7 @@
 
 import React, { useState, useEffect, useRef, useCallback } from "react";
 import { motion } from "framer-motion";
-import { Terminal as terminal, ArrowRight, Cpu } from "lucide-react";
+import { Terminal as TerminalLogo, ArrowRight, Cpu } from "lucide-react";
 
 // Terminal prefix
 const PREFIX = "root@cyberdeck";
@@ -186,7 +186,7 @@ export default function Terminal({ folderData = [] }) {
       {/* Terminal header */}
       <div className="w-full h-10 border-b-2 flex items-center justify-between border-emerald-700 text-emerald-300 px-3 md:px-5 shrink-0">
         <div className="flex items-center gap-2">
-          <terminal size={16} />
+          <TerminalLogo size={16} />
           <span className="text-sm md:text-base truncate">AI Terminal</span>
         </div>
         <motion.div

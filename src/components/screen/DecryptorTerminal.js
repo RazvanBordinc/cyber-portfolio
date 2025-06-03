@@ -5,7 +5,7 @@ import { motion } from "framer-motion";
 import { Unlock, RefreshCw, Key } from "lucide-react";
 import { decryptFunction } from "@/lib/utils/decryptFunction";
 
-export default function DecryptorTerminal() {
+export default function DecryptorTerminal({ showHighlights }) {
   const [text, setText] = useState("");
   const [key, setKey] = useState("");
   const [isDecrypting, setIsDecrypting] = useState(false);
@@ -88,7 +88,9 @@ export default function DecryptorTerminal() {
 
   return (
     <motion.div
-      className="border-2 rounded border-emerald-700 w-full lg:w-2/5 relative overflow-hidden bg-emerald-700/10"
+      className={`border-2 rounded border-emerald-700 w-full lg:w-2/5 relative overflow-hidden bg-emerald-700/10 transition-all duration-500 ${
+        showHighlights ? "blur-sm opacity-40" : ""
+      }`}
       initial={{ opacity: 0 }}
       animate={{ opacity: 1 }}
       transition={{ duration: 0.5 }}
